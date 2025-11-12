@@ -2,7 +2,7 @@
 	<dialog :open="isOpen">
 		<article>
 			<h2>Edita tu perfil</h2>
-			<form v-if="user" @submit.prevent="submitAppointment">
+			<form v-if="user" @submit="submitProfile">
 				<label>
 					Nombre
 					<input type="text" v-model="user.name" />
@@ -22,7 +22,7 @@
 				</label>
 
 				<footer class="form-buttons">
-					<button class="secondary" @click="handleCancel">
+					<button class="secondary" @click.prevent="handleCancel">
 						Cancelar
 					</button>
 					<button type="submit">Confirmar</button>
@@ -56,11 +56,24 @@ export default {
 		handleCancel() {
 			this.$emit("close")
 		},
+		async submitProfile() {
+			this.error = null
+			const result = await this.$api
+				.editUser({
+					name: this.user.name,
+					email: this.user.email,
+					telegram_id: this.user.telegram_id,
+				})
+				.catch((error) => {
+					console.error(error)
+
+					this.error = error.response.data.error
+					return null
+				})
+		},
 	},
 	async mounted() {
-		this.user = await this.$api.selfUser().catch((error) => {
-			return null
-		})
+		this.user = window.user
 	},
 }
 </script>

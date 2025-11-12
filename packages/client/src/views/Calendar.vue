@@ -30,6 +30,7 @@ export default {
 	},
 	data() {
 		return {
+			appointments: null,
 			modalOpen: false,
 			modalDate: null,
 			calendarOptions: {
@@ -43,17 +44,7 @@ export default {
 					}
 				},
 				height: "auto",
-				events: [
-					// Aquí puedes agregar eventos locales
-					{
-						title: "Evento Local 1",
-						start: "2025-11-05",
-					},
-					{
-						title: "Evento Local 2",
-						start: "2025-11-06",
-					},
-				],
+				events: [],
 			},
 		}
 	},
@@ -72,6 +63,20 @@ export default {
 			this.modalOpen = false
 			this.modalDate = null
 		},
+		loadAppointmentsToCalendar() {
+			if (this.appointments) {
+				this.calendarOptions.events = this.appointments.map(
+					(appointment) => ({
+						title: appointment.title,
+						start: appointment.date.split(" ")[0],
+					}),
+				)
+			}
+		},
+	},
+	async mounted() {
+		this.appointments = window.appointments
+		this.loadAppointmentsToCalendar()
 	},
 }
 </script>

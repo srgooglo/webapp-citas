@@ -121,4 +121,22 @@ export default class API {
 
 		return response.data
 	}
+	static async selfAppointments() {
+		const response = await this.baseRequest({
+			method: "GET",
+			url: "/appointments/self",
+		})
+
+		return response.data
+	}
+
+	static async editUser(payload) {
+		const response = await this.baseRequest({
+			method: "PUT",
+			url: "/users/self/edit",
+			data: payload,
+		})
+
+		return response.data
+	}
 }

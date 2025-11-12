@@ -58,5 +58,19 @@ return function (App $app) {
                     ]));
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         });
+        $group->put('/self/edit', function ($request, $response){
+            $user = $request->getAttribute('user');
+            $user_id = $user['id'];
+            $body = $request->getParsedBody();
+            $userdb = User::find($user_id);
+            $userdb->name = $body['name'];
+            $userdb->email = $body['email'];
+            $userdb->telegram_id = $body['telegram_id'];
+            $userdb->save();
+
+
+
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        });
     })->add(new JWTAuth());
 };

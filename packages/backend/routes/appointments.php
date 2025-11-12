@@ -33,14 +33,43 @@ $group->post('/create', function ($request, $response) {
         ]);
     }
 
+    // Enviar mensaje de Telegram si el usuario tiene un telegram_id
+            if (!empty($user['telegram_id'])) {
+                sendTelegramMessage($user['telegram_id'], "¡Tienes una nueva cita! 📅\n\nTítulo: {$body['title']}\nDescripción: {$body['description']}\nFecha: {$body['date']}");
+            }
+
     $response->getBody()->write(json_encode(['success' => true, 'appointment' => $appointment]));
     return $response->withHeader('Content-Type', 'application/json');
 });
 $group->get('/self', function ($request, $response) {
     $user = $request->getAttribute('user');
-    $appointments = Appointment::where('host_user_id', $user['id'])
+    $appointments = Appointment::with(["guestUser","hostUser"])
+        ->where('host_user_id', $user['id'])
         ->orWhere('guest_user_id', $user['id'])
-        ->get();
+        ->get()
+        ->map(function ($appointment) use ($request) {
+            $avatarPath = $appointment->hostUser->avatar;
+            if (strpos($avatarPath, 'http') === false) {
+                $appointment->hostUser->avatar = $request->getUri()->getScheme() . "://"
+                    . $request->getUri()->getHost()
+                    . ($request->getUri()->getPort() ? ':' . $request->getUri()->getPort() : '')
+                    . $avatarPath;
+            }
+                    // Verificar si el invitado tiene cuenta (guestUser)
+                    if ($appointment->guestUser) {
+                        $avatarPath = $appointment->guestUser->avatar;
+                        // Verificar si el avatar existe
+                        if ($avatarPath && file_exists(__DIR__ . '/../public' . $avatarPath)) {
+                            $appointment->guestUser->avatar = $request->getUri()->getScheme() . "://"
+                            . $request->getUri()->getHost() . ':' . $request->getUri()->getPort()
+                            . $avatarPath;
+                        } else {
+                            $appointment->guestUser->avatar = $request->getUri()->getScheme() . "://"
+                            . $request->getUri()->getHost() . ':' . $request->getUri()->getPort() . '/avatar';
+                        }
+                    }
+                    return $appointment;
+                });
 
     $response->getBody()->write($appointments->toJson());
     return $response->withHeader('Content-Type', 'application/json');
@@ -58,3 +87,23 @@ $group->get('/{id}', function ($request, $response, $args) {
 });
 })->add(new JWTAuth());
 };
+
+// Función para enviar mensajes de Telegram
+function sendTelegramMessage($telegramId, $message) {
+    $botToken = $_ENV['TELEGRAM_BOT_TOKEN']; // Asegúrate de agregar esto en tu archivo .env
+    $apiUrl = "https://api.telegram.org/bot$botToken/sendMessage";
+
+    $params = [
+        'chat_id' => $telegramId,
+        'text' => $message,
+        'parse_mode' => 'Markdown'
+    ];
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiUrl);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+    curl_exec($ch);
+    curl_close($ch);
+}

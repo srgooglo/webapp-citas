@@ -20,7 +20,7 @@
 						:isOpen="modalOpen"
 						@close="handleModalClose"
 					></Modal>
-					<button @click="toLogout">Logout</button>
+					<button class="secondary" @click="toLogout">Logout</button>
 				</div>
 			</div>
 
@@ -62,7 +62,6 @@ export default {
 		},
 		handleModalClose() {
 			this.modalOpen = false
-			this.modalDate = null
 		},
 	},
 	async mounted() {
@@ -80,6 +79,16 @@ export default {
 		console.log(`Loaded user >`, this.user)
 
 		window.user = this.user
+
+		this.appointments = await this.$api
+			.selfAppointments()
+			.catch((error) => {
+				return null
+			})
+
+		console.log(`Loaded appointments >`, this.appointments)
+
+		window.appointments = this.appointments
 
 		this.loading = false
 	},

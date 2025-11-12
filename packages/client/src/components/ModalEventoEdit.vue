@@ -1,10 +1,8 @@
 <template>
 	<dialog :open="isOpen">
 		<article>
-			<h2>Agrega tu cita</h2>
+			<h2>Edita esta cita</h2>
 			<form @submit="submitAppointment">
-				<p><strong>Fecha:</strong> {{ date }}</p>
-
 				<label>
 					Título
 					<input type="text" v-model="form.title" required />
@@ -13,6 +11,16 @@
 				<label>
 					Descripción
 					<textarea v-model="form.description" required></textarea>
+				</label>
+
+				<label>
+					Dia de la cita
+					<input
+						type="date"
+						:min="getToday()"
+						v-model="form.date"
+						required
+					/>
 				</label>
 
 				<label>
@@ -47,10 +55,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		date: {
-			type: String,
-			default: "",
-		},
+		appointmentData: Object,
 	},
 	data() {
 		return {
@@ -59,6 +64,7 @@ export default {
 				title: "",
 				description: "",
 				guest_user_name: "",
+				date: "",
 				time: "",
 			},
 		}
@@ -91,6 +97,34 @@ export default {
 					this.error = error.response.data.error
 					return null
 				})
+		},
+		getToday() {
+			const today = new Date()
+			const year = today.getFullYear()
+			const month = String(today.getMonth() + 1).padStart(2, "0")
+			const day = String(today.getDate()).padStart(2, "0")
+			return `${year}-${month}-${day}`
+		},
+	},
+	watch: {
+		appointmentData: {
+			immediate: true,
+			handler(newData) {
+				if (newData) {
+					this.form = {
+						title: newData.title || "",
+						description: newData.description || "",
+						guest_user_name:
+							newData.guest_user_name ||
+							newData.guest_user?.name ||
+							"",
+						date: newData.date ? newData.date.split(" ")[0] : "",
+						time: newData.date
+							? newData.date.split(" ")[1]?.slice(0, 5)
+							: "",
+					}
+				}
+			},
 		},
 	},
 }
