@@ -48,3 +48,6 @@ Como ejecutar el proyecto:
     ```
     npm run dev
     ```
+11. Para probar el pago se puede poner ```4242 4242 4242 4242```, de cvc ```123``` y de fecha de caducidad cualquier fecha futura
+
+12. Para probar el sistema de mensaje de telegram tienes que obtener el id haciendole una peticion a userinfobot y luego poner el id a tu usuario de la webapp

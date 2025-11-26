@@ -2,7 +2,7 @@
 	<dialog :open="isOpen">
 		<article>
 			<h2>Edita esta cita</h2>
-			<form @submit="submitAppointment">
+			<form @submit="editAppointment">
 				<label>
 					Título
 					<input type="text" v-model="form.title" required />
@@ -82,14 +82,15 @@ export default {
 				time: "",
 			}
 		},
-		async submitAppointment() {
+		async editAppointment() {
 			this.error = null
 			const result = await this.$api
-				.createAppointment({
+				.editAppointment({
+					id: this.appointmentData.id,
 					title: this.form.title,
 					description: this.form.description,
 					guest_user_name: this.form.guest_user_name,
-					date: this.date + " " + this.form.time,
+					date: this.form.date + " " + this.form.time,
 				})
 				.catch((error) => {
 					console.error(error)

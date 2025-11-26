@@ -43,40 +43,49 @@
 					{{ formatDate(appointment.date) }}
 				</p>
 			</div>
-			<div
-				class="appointment-actions"
-				v-if="user.id === appointment.host_user_id"
-			>
+			<div class="appointment-actions">
 				<button @click="editAppointment(appointment)">
 					Editar cita
 				</button>
-				<button class="secondary" @click="">Borrar cita</button>
+				<button class="secondary" @click="confirmDelete(appointment)">
+					Borrar cita
+				</button>
 			</div>
 		</div>
-		<Modal
-			:isOpen="modalOpen"
+		<ModalEventoEdit
+			:isOpen="showEditModal"
 			@close="handleModalClose"
 			:appointmentData="modalAppointment"
-		></Modal>
+		></ModalEventoEdit>
+		<ModalEventoDelete
+			:isOpen="showDeleteModal"
+			@close="showDeleteModal = false"
+			@delete="performDelete"
+			:appointment="appointmentToDelete"
+		/>
 	</div>
 	<h2 v-else>No tienes citas registradas</h2>
 </template>
 
 <script>
-import Modal from "@/components/ModalEventoEdit.vue"
+import ModalEventoEdit from "@/components/ModalEventoEdit.vue"
+import ModalEventoDelete from "@/components/ModalEventoDelete.vue"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
 
 export default {
 	components: {
-		Modal,
+		ModalEventoEdit,
+		ModalEventoDelete,
 	},
 	data() {
 		return {
 			appointments: null,
 			user: null,
-			modalOpen: false,
+			showEditModal: false,
 			modalAppointment: null,
+			showDeleteModal: false,
+			appointmentToDelete: null,
 		}
 	},
 	methods: {
@@ -87,16 +96,40 @@ export default {
 			})
 		},
 		editAppointment(appointment) {
-			this.modalOpen = true
-			this.modalAppointment = { ...appointment }
+			this.showEditModal = true
+			this.modalAppointment = appointment
+		},
+		confirmDelete(appointment) {
+			this.appointmentToDelete = appointment
+			this.showDeleteModal = true
+		},
+		async performDelete(appointment) {
+			const result = await this.$api
+				.deleteAppointment(appointment.id)
+				.catch((error) => {
+					console.error(error)
+					return null
+				})
+
+			if (result) {
+				window.appointments = window.appointments.filter(
+					(a) => a.id !== appointment.id,
+				)
+				this.appointments = this.appointments.filter(
+					(a) => a.id !== appointment.id,
+				)
+			}
+			this.showDeleteModal = false
 		},
 		handleModalClose() {
-			this.modalOpen = false
+			this.showEditModal = false
 			this.modalAppointment = null
 		},
 	},
 	async mounted() {
-		this.appointments = window.appointments
+		this.appointments = window.appointments.sort(
+			(a, b) => new Date(a.date) - new Date(b.date),
+		)
 		this.user = window.user
 	},
 }

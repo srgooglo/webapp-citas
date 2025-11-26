@@ -13,6 +13,7 @@ class Appointment extends Model
         'host_user_id',
         'guest_user_id',
         'guest_user_name',
+        'guest_user_telegram_id',
         'date',
         'title',
         'description',
@@ -28,13 +29,14 @@ class Appointment extends Model
                 $table->unsignedBigInteger('host_user_id');
                 $table->unsignedBigInteger('guest_user_id')->nullable();
                 $table->string('guest_user_name')->nullable();
+                $table->string('guest_user_telegram_id')->nullable();
                 $table->dateTime('date');
                 $table->string('title');
                 $table->string('description');
                 $table->timestamps();
 
-                $table->foreign('host_user_id')->references('id')->on('users');
-                $table->foreign('guest_user_id')->references('id')->on('users');
+                $table->foreign('host_user_id')->references('id')->on('users')->onDelete('cascade');
+                $table->foreign('guest_user_id')->references('id')->on('users')->onDelete('cascade');
             });
         }
     }

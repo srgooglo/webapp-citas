@@ -68,11 +68,6 @@ main {
 	gap: 10px;
 }
 
-/* only if header is in premium mode */
-.header-account-premium .header-account-content {
-	//backdrop-filter: blur(5px);
-}
-
 .header-account-bg-wrapper {
 	z-index: 10;
 

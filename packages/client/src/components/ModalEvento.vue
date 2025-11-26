@@ -29,6 +29,11 @@
 					/>
 				</label>
 
+				<label>
+					Telegram ID del invitado
+					<input type="text" v-model="form.guest_user_telegram_id" />
+				</label>
+
 				<footer class="form-buttons">
 					<button class="secondary" @click.prevent="handleCancel">
 						Cancelar
@@ -59,6 +64,7 @@ export default {
 				title: "",
 				description: "",
 				guest_user_name: "",
+				guest_user_telegram_id: "",
 				time: "",
 			},
 		}
@@ -73,6 +79,7 @@ export default {
 				title: "",
 				description: "",
 				guest_user_name: "",
+				guest_user_telegram_id: "",
 				time: "",
 			}
 		},
@@ -83,6 +90,7 @@ export default {
 					title: this.form.title,
 					description: this.form.description,
 					guest_user_name: this.form.guest_user_name,
+					guest_user_telegram_id: this.form.guest_user_telegram_id,
 					date: this.date + " " + this.form.time,
 				})
 				.catch((error) => {

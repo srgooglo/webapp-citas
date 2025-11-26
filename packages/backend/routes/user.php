@@ -58,7 +58,7 @@ return function (App $app) {
                     ]));
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         });
-        $group->put('/self/edit', function ($request, $response){
+        $group->put('/self', function ($request, $response){
             $user = $request->getAttribute('user');
             $user_id = $user['id'];
             $body = $request->getParsedBody();

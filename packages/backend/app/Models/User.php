@@ -14,6 +14,7 @@ class User extends Model
         "pwd_hash",
         "avatar",
         "telegram_id",
+        "is_premium",
         "google_calendar_token",
     ];
     protected $hidden = ["pwd_hash", "telegram_id", "email"];
@@ -26,10 +27,11 @@ class User extends Model
             Capsule::schema()->create('users', function (Blueprint $table) {
                 $table->id();
                 $table->string("email")->unique();
-                $table->string("name");
-                $table->string("pwd_hash");
+                $table->string("name")->unique();
+                $table->string("pwd_hash")->nullable();
                 $table->string("avatar")->nullable();
                 $table->string("telegram_id")->nullable();
+                $table->boolean("is_premium")->default(false);
                 $table->string("google_calendar_token")->nullable();
             });
         }

@@ -115,7 +115,7 @@ export default class API {
 	static async createAppointment(payload) {
 		const response = await this.baseRequest({
 			method: "POST",
-			url: "/appointments/create",
+			url: "/appointments",
 			data: payload,
 		})
 
@@ -124,7 +124,29 @@ export default class API {
 	static async selfAppointments() {
 		const response = await this.baseRequest({
 			method: "GET",
-			url: "/appointments/self",
+			url: "/appointments",
+		})
+
+		return response.data
+	}
+
+	static async editAppointment(payload) {
+		const response = await this.baseRequest({
+			method: "PUT",
+			url: "/appointments",
+			data: payload,
+		})
+
+		return response.data
+	}
+
+	static async deleteAppointment(id) {
+		const response = await this.baseRequest({
+			method: "DELETE",
+			url: "/appointments",
+			data: {
+				id: id,
+			},
 		})
 
 		return response.data
@@ -133,8 +155,17 @@ export default class API {
 	static async editUser(payload) {
 		const response = await this.baseRequest({
 			method: "PUT",
-			url: "/users/self/edit",
+			url: "/users/self",
 			data: payload,
+		})
+
+		return response.data
+	}
+
+	static async buyPremium() {
+		const response = await this.baseRequest({
+			method: "POST",
+			url: "/purchase/create-checkout-session",
 		})
 
 		return response.data

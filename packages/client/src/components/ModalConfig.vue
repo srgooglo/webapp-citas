@@ -2,7 +2,7 @@
 	<dialog :open="isOpen">
 		<article>
 			<h2>Edita tu perfil</h2>
-			<form v-if="user" @submit="submitProfile">
+			<form v-if="user" @submit.prevent="submitProfile">
 				<label>
 					Nombre
 					<input type="text" v-model="user.name" />
@@ -18,14 +18,19 @@
 				</label>
 				<label>
 					Subir avatar <br />
-					<UpdateAvatarButton />
+					<UpdateAvatarButton @feedback="handleAvatarFeedback" />
+					<p v-if="avatarMessage" class="feedback">
+						{{ avatarMessage }}
+					</p>
 				</label>
 
 				<footer class="form-buttons">
 					<button class="secondary" @click.prevent="handleCancel">
 						Cancelar
 					</button>
-					<button type="submit">Confirmar</button>
+					<button @click="handleCancel" type="submit">
+						Confirmar
+					</button>
 				</footer>
 			</form>
 		</article>
@@ -50,11 +55,19 @@ export default {
 				email: "",
 				telegram_id: "",
 			},
+			avatarMessage: null,
 		}
 	},
 	methods: {
 		handleCancel() {
 			this.$emit("close")
+		},
+		handleAvatarFeedback(message) {
+			this.avatarMessage = message
+			setTimeout(() => {
+				this.avatarMessage = null
+				window.location.reload()
+			}, 4000) // mensaje desaparece a los 4 segundos
 		},
 		async submitProfile() {
 			this.error = null
@@ -66,7 +79,6 @@ export default {
 				})
 				.catch((error) => {
 					console.error(error)
-
 					this.error = error.response.data.error
 					return null
 				})
@@ -92,5 +104,11 @@ export default {
 
 .form-buttons button {
 	width: 25%;
+}
+
+.feedback {
+	color: green;
+	font-size: 0.9rem;
+	margin-top: 0.5rem;
 }
 </style>

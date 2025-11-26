@@ -19,13 +19,23 @@ export default {
 						this.$api
 							.updateAvatar(file)
 							.then(() => {
-								console.log("Avatar updated successfully")
+								this.$emit(
+									"feedback",
+									"Avatar actualizado correctamente. La página se recargará en unos segundos.",
+								)
 							})
 							.catch((error) => {
-								console.error("Error updating avatar:", error)
+								this.$emit(
+									"feedback",
+									"Error actualizando el avatar: " +
+										error.message,
+								)
 							})
 					} else {
-						console.error("Please select an image file")
+						this.$emit(
+							"feedback",
+							"Por favor selecciona un archivo de imagen.",
+						)
 					}
 				}
 			})

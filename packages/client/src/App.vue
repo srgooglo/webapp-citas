@@ -8,6 +8,9 @@
 				<router-link to="/">Home</router-link>
 				<router-link to="/calendar">Calendar</router-link>
 			</nav>
+			<button v-if="user && user.is_premium == 0" @click="buyPremium">
+				Comprar Premium
+			</button>
 
 			<div v-if="user" class="header-account">
 				<div class="header-account-content">
@@ -22,6 +25,10 @@
 					></Modal>
 					<button class="secondary" @click="toLogout">Logout</button>
 				</div>
+				<div
+					v-if="user.is_premium == 1"
+					class="header-account-bg-wrapper"
+				/>
 			</div>
 
 			<div v-if="!user" class="header-account">
@@ -62,6 +69,10 @@ export default {
 		},
 		handleModalClose() {
 			this.modalOpen = false
+		},
+		async buyPremium() {
+			const response = await this.$api.buyPremium()
+			window.location.href = response.url
 		},
 	},
 	async mounted() {

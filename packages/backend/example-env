@@ -1,2 +1,4 @@
 JWT_SECRET=clave_super_secreta
 TELEGRAM_BOT_TOKEN=clave_super_secreta
+STRIPE_SECRET_KEY=clave_super_secreta
+APP_URL=la_url_en_donde_está_hosteado_este_servicio
