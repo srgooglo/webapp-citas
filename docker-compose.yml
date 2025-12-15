@@ -1,5 +1,5 @@
 # Docker Compose minimalista (sin Dockerfiles)
-# - Backend: imagen oficial php:8.4-fpm que sirve el código montado desde ./packages/backend
+# - Backend: imagen oficial php:8.4-apache que sirve el código montado desde ./packages/backend
 # - Frontend: se asume que has ejecutado `npm run build` en ./packages/client y la carpeta dist
 #             será montada en Caddy en /srv/frontend para servir los archivos estáticos
 # - Caddy: proxy TLS automático, sirve archivos estáticos y enruta /api al backend

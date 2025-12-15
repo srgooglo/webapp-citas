@@ -51,3 +51,13 @@ Como ejecutar el proyecto:
 11. Para probar el pago se puede poner ```4242 4242 4242 4242```, de cvc ```123``` y de fecha de caducidad cualquier fecha futura
 
 12. Para probar el sistema de mensaje de telegram tienes que obtener el id haciendole una peticion a userinfobot y luego poner el id a tu usuario de la webapp
+
+Ahora puedes correr toda la aplicacion con solo docker.
+Deberas de antes compilar el frontend con: `npm run build` y luego `docker compose up -d`.
+Si experimenta problemas a la hora de subir archivos, cambiar la imagen del avatar, puede deberse a un problema de permisos:
+```
+docker compose exec backend chown -R www-data:www-data /var/www/html/public/uploads
+docker compose exec backend chmod -R 755 /var/www/html/public/uploads
+```
+así ya se arreglan los permisos.
+Hay que tener cuidado ya que, tanto las rutas de purchase como de calendar y el .env, tiene rutas que dirigen hacia el dominio de la aplicación, así que si cambias el dominio, debes cambiar dichas rutas en el backend y en el .env.

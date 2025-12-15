@@ -1,4 +1,4 @@
-FROM php:8.4-fpm
+FROM php:8.4-apache
 
 # Instalar dependencias del sistema y extensiones requeridas
 RUN apt-get update && apt-get install -y \
